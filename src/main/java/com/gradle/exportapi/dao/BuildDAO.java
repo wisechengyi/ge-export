@@ -34,8 +34,7 @@ public class BuildDAO {
 
 
         // If build id exists in the builds table, return the id directly
-        String getIdSql = "SELECT id FROM builds WHERE build_id = ?";
-        Long id = Yank.queryScalar(getIdSql, Long.class, new Object[] {build.getBuildId()});
+        Long id = Yank.queryScalar("SELECT id FROM builds WHERE build_id = ?", Long.class, new Object[] {build.getBuildId()});
         if (id != null) {
             return id;
         }
