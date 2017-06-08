@@ -32,12 +32,20 @@ public class BuildDAO {
                 build.getTagsAsSingleString()
         };
 
+
+        // If build id exists in the builds table, return the id directly
+        String getIdSql = "SELECT id FROM builds WHERE build_id = ?";
+        Long id = Yank.queryScalar(getIdSql, Long.class, new Object[] {build.getBuildId()});
+        if (id != null) {
+            return id;
+        }
+
         String SQL = insert("builds (build_id, user_name, root_project_name, start, finish, status, tags)", params);
-        Long generatedid= Yank.insert(SQL, params);
-        if(generatedid == 0) {
+        Long generatedId= Yank.insert(SQL, params);
+        if(generatedId == 0) {
             throw new RuntimeException("Unable to save build record for " + build.getBuildId());
         }
-        return generatedid;
+        return generatedId;
     }
 
     public static String findLastBuildId() {
