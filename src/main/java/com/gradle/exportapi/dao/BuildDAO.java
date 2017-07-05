@@ -14,12 +14,6 @@ public class BuildDAO {
 
     private static final Logger log = LoggerFactory.getLogger(BuildDAO.class);
 
-    /**
-     * Insert the build if the db does not have it, else get the existing one.
-     *
-     * @param build a build.
-     * @return the id of the build in the `builds` table.
-     */
     public static long insertBuild(Build build) {
 
         OffsetDateTime start = OffsetDateTime.ofInstant
