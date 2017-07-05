@@ -1,5 +1,6 @@
 package com.gradle.exportapi.dao;
 
+import com.gradle.exportapi.dbutil.SQLHelper;
 import com.gradle.exportapi.model.Build;
 import org.knowm.yank.Yank;
 import org.slf4j.Logger;
@@ -8,11 +9,9 @@ import org.slf4j.LoggerFactory;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
-import static com.gradle.exportapi.dbutil.SQLHelper;
-
 public class BuildDAO {
 
-    static final Logger log = LoggerFactory.getLogger(BuildDAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(BuildDAO.class);
 
     /**
      * Insert the build if the db does not have it, else get the existing one.
@@ -42,6 +41,7 @@ public class BuildDAO {
         // If build id exists in the builds table, return the id directly
         Long id = Yank.queryScalar("SELECT id FROM builds WHERE build_id = ?", Long.class, new Object[]{build.getBuildId()});
         if (id != null) {
+            logger.warn(String.format("%s already in db. Skipped. This could entail an incomplete export", build.getBuildId()));
             return id;
         }
 
