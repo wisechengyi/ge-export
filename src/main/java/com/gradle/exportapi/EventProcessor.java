@@ -1,17 +1,16 @@
 package com.gradle.exportapi;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.gradle.exportapi.dao.BuildDAO;
 import com.gradle.exportapi.dao.CustomValueDAO;
+import com.gradle.exportapi.dao.TasksDAO;
 import com.gradle.exportapi.dao.TestsDAO;
 import com.gradle.exportapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.gradle.exportapi.dao.TasksDAO;
 
 import java.time.Instant;
 import java.util.Optional;
-
-import static com.gradle.exportapi.dao.BuildDAO.*;
 
 
 class EventProcessor {
@@ -219,13 +218,13 @@ data: {"timestamp":1491615409161,"type":{"majorVersion":1,"minorVersion":0,"even
         Build currentBuild = processor.currentBuild;
         currentBuild.resolveStatus();
 
-        Optional<Long> buildTableId = getBuildTableId(currentBuild);
+        Optional<Long> buildTableId = BuildDAO.getBuildTableId(currentBuild);
         if (buildTableId.isPresent()) {
             log.warn(String.format("Skipped build %s that is already in db. This could entail an incomplete export from previous run.",
                     currentBuild.getBuildId()));
             return;
         }
-        currentBuild.setId(insertBuild(currentBuild));
+        currentBuild.setId(BuildDAO.insertBuild(currentBuild));
 
 
         currentBuild.taskMap.values().stream().forEach(TasksDAO::insertTask);
