@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.gradle.exportapi.dao.TasksDAO;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static com.gradle.exportapi.dao.BuildDAO.*;
 
@@ -218,7 +219,12 @@ data: {"timestamp":1491615409161,"type":{"majorVersion":1,"minorVersion":0,"even
         Build currentBuild = processor.currentBuild;
         currentBuild.resolveStatus();
 
-        currentBuild.setId( insertOrGetBuild(currentBuild) );
+        Optional<Long> buildTableId = getBuildTableId(currentBuild);
+        if (!buildTableId.isPresent()) {
+            log.warn(String.format("%s already in db. Skipped. This could entail an incomplete export", currentBuild.getBuildId()));
+            return;
+        }
+        currentBuild.setId( insertBuild(currentBuild) );
 
 
         currentBuild.taskMap.values().stream().forEach( TasksDAO::insertTask );
