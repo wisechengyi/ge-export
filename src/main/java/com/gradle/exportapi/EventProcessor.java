@@ -220,15 +220,16 @@ data: {"timestamp":1491615409161,"type":{"majorVersion":1,"minorVersion":0,"even
         currentBuild.resolveStatus();
 
         Optional<Long> buildTableId = getBuildTableId(currentBuild);
-        if (!buildTableId.isPresent()) {
-            log.warn(String.format("%s already in db. Skipped. This could entail an incomplete export", currentBuild.getBuildId()));
+        if (buildTableId.isPresent()) {
+            log.warn(String.format("Skipped build %s that is already in db. This could entail an incomplete export from previous run.",
+                    currentBuild.getBuildId()));
             return;
         }
-        currentBuild.setId( insertBuild(currentBuild) );
+        currentBuild.setId(insertBuild(currentBuild));
 
 
-        currentBuild.taskMap.values().stream().forEach( TasksDAO::insertTask );
-        currentBuild.testMap.values().stream().forEach( TestsDAO::insertTest );
+        currentBuild.taskMap.values().stream().forEach(TasksDAO::insertTask);
+        currentBuild.testMap.values().stream().forEach(TestsDAO::insertTest);
         currentBuild.customValues.stream().forEach(CustomValueDAO::insertCustomValue);
     }
 
