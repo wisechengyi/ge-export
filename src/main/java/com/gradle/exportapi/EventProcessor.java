@@ -220,8 +220,7 @@ data: {"timestamp":1491615409161,"type":{"majorVersion":1,"minorVersion":0,"even
 
         Optional<Long> buildTableId = BuildDAO.getBuildTableId(currentBuild);
         if (buildTableId.isPresent()) {
-            log.warn(String.format("Skipped build %s that is already in db. This could entail an incomplete export from previous run.",
-                    currentBuild.getBuildId()));
+            log.warn("Skipped build {} that is already in db", currentBuild.getBuildId());
             return;
         }
         currentBuild.setId(BuildDAO.insertBuild(currentBuild));
